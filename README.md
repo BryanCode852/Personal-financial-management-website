@@ -12,8 +12,10 @@ Usage
 2. If you do not want to experience registration, the username is "bryan123" and the password is "bryan123".
 
 File Struture
+
 .
 └── code/
+
     ├── function/
     │   ├── login.js
     │   ├── regist.js
