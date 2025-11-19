@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Management - Dashboard</title>
+    <!-- Theme Management: don't load light mode if it already was dark mode -->
+    <script>
+        (function() {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
+    <link rel="stylesheet" href="style/mainStyle.css">
+</head>
+<body>
+    <!-- Inner Window-->
+    <div class="container">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="logo-container">
+                <div class="logo-oval">
+                    <img src="pic/logo_lightmode_vertical_s.png" alt="Logo" width="145" height="50">
+                </div>
+            </div>
+            <div class="top-controls">
+                <button class="icon-btn" id="themeToggle" title="Toggle Dark Mode">
+                    <span class="theme-icon sun">☀️</span>
+                    <span class="theme-icon moon">🌙</span>
+                </button>
+                <button class="icon-btn" id="settingsBtn" title="Settings">
+                    <span class="settings-icon">⚙️</span>
+                </button>
+                <button class="icon-btn" id="profileBtn" title="Profile">
+                    <span class="profile-icon">👤</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Sidebar Navigation -->
+            <div class="sidebar">
+                <nav class="nav-menu">
+                    <a href="main.html" class="nav-item active" data-page="dashboard">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="dataEntry.html" class="nav-item" data-page="spending">
+                        <span class="nav-icon">💰</span>
+                        <span class="nav-text">Spending<br>Income</span>
+                    </a>
+                    <a href="charts.html" class="nav-item" data-page="charts">
+                        <span class="nav-icon">📈</span>
+                        <span class="nav-text">Chart</span>
+                    </a>
+                    <a href="goals.html" class="nav-item" data-page="goals">
+                        <span class="nav-icon">🎯</span>
+                        <span class="nav-text">Goals</span>
+                    </a>
+                </nav>
+                
+                <!-- Logout Button -->
+                <button class="nav-item logout-btn" id="logoutBtn">
+                    <span class="nav-icon">🚪</span>
+                    <span class="nav-text">Log Out</span>
+                </button>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <h1 class="page-title">Dashboard</h1>
+
+                <div class="dashboard-grid">
+                    <!-- Card 1: Monthly Income -->
+                    <div class="dashboard-card income-card">
+                        <h3 class="card-title">💵 Monthly Income 💵</h3>
+                        <div class="card-main-value" id="dashMonthlyIncome">$0.00</div>
+                        <div class="card-comparison" id="incomeComparison">+xx% compare to last month</div>
+                    </div>
+
+                    <!-- Card 2: Monthly Spending -->
+                    <div class="dashboard-card expense-card">
+                        <h3 class="card-title">💸 Monthly Spending 💸</h3>
+                        <div class="card-main-value" id="dashMonthlySpending">$0.00</div>
+                        <div class="card-comparison" id="spendingComparison">-xx% compare to last month</div>
+                    </div>
+
+                    <!-- Card 3: Net Balance -->
+                    <div class="dashboard-card balance-card">
+                        <h3 class="card-title">💰 Net Balance 💰</h3>
+                        <div class="card-main-value" id="dashNetBalance">$0.00</div>
+                        <div class="card-comparison" id="balanceComparison">+xx% compare to last month</div>
+                    </div>
+
+                    <!-- Card 4: Latest Spending -->
+                    <div class="dashboard-card spending-list-card">
+                        <h3 class="card-title">Latest Spending</h3>
+                        <div class="spending-list" id="latestSpendingList">
+                            <p class="empty-state">No recent spending</p>
+                        </div>
+                        <div class="spending-total">
+                            <span>Total</span>
+                            <span id="spendingTotal">$0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 5: Weekly Trend Chart -->
+                    <div class="dashboard-card chart-card">
+                        <h3 class="card-title">Weekly Trend</h3>
+                        <canvas id="weeklyTrendChart"></canvas>
+                    </div>
+
+                    <!-- Card 6: Goals Overview -->
+                    <div class="dashboard-card goals-card">
+                        <h3 class="card-title">Goals</h3>
+                        <div class="goals-overview" id="goalsOverview">
+                            <p class="empty-state">No active goals</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 7: Currency Exchange -->
+                    <div class="dashboard-card exchange-card">
+                        <h3 class="card-title">Exchange</h3>
+                        <div class="exchange-converter">
+                            <div class="exchange-row">
+                                <input type="number" id="amountTop" value="1" min="0" step="0.01">
+                                <select id="currencyTop" class="currency-select">
+                                    <option value="HKD" selected>HKD</option>
+                                    <option value="USD">USD</option>
+                                    <option value="JPY">JPY</option>
+                                    <option value="GBP">GBP</option>
+                                    <option value="EUR">EUR</option>
+                                </select>
+                            </div>
+                            <button class="exchange-swap-btn" id="swapCurrencies" title="Swap Currencies">⇅</button>
+                            <div class="exchange-row">
+                                <input type="number" id="amountBottom" value="0.13" min="0" step="0.01">
+                                <select id="currencyBottom" class="currency-select">
+                                    <option value="HKD">HKD</option>
+                                    <option value="USD" selected>USD</option>
+                                    <option value="JPY">JPY</option>
+                                    <option value="GBP">GBP</option>
+                                    <option value="EUR">EUR</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="exchange-rate" id="exchangeRate">1 HKD = 0.13 USD</div>
+                        <div class="exchange-status" id="exchangeStatus">Loading rates...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="function/main.js"></script>
+</body>
+</html>

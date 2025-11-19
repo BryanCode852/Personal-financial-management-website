@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Management - Charts</title>
+    <script>
+        (function() {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
+    <link rel="stylesheet" href="style/mainStyle.css">
+    <link rel="stylesheet" href="style/chartsStyle.css">
+</head>
+<body>
+    <!-- Inner Window-->
+    <div class="container">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="logo-container">
+                <div class="logo-oval">
+                    <img src="pic/logo_lightmode_vertical_s.png" alt="Logo" width="145" height="50">
+                </div>
+            </div>
+            <div class="top-controls">
+                <button class="icon-btn" id="themeToggle" title="Toggle Dark Mode">
+                    <span class="theme-icon sun">☀️</span>
+                    <span class="theme-icon moon">🌙</span>
+                </button>
+                <button class="icon-btn" id="settingsBtn" title="Settings">
+                    <span class="settings-icon">⚙️</span>
+                </button>
+                <button class="icon-btn" id="profileBtn" title="Profile">
+                    <span class="profile-icon">👤</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Sidebar Navigation -->
+            <div class="sidebar">
+                <nav class="nav-menu">
+                    <a href="main.html" class="nav-item" data-page="dashboard">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="dataEntry.html" class="nav-item" data-page="spending">
+                        <span class="nav-icon">💰</span>
+                        <span class="nav-text">Spending<br>Income</span>
+                    </a>
+                    <a href="charts.html" class="nav-item active" data-page="charts">
+                        <span class="nav-icon">📈</span>
+                        <span class="nav-text">Chart</span>
+                    </a>
+                    <a href="goals.html" class="nav-item" data-page="goals">
+                        <span class="nav-icon">🎯</span>
+                        <span class="nav-text">Goals</span>
+                    </a>
+                </nav>
+                
+                <!-- Logout Button -->
+                <button class="nav-item logout-btn" id="logoutBtn">
+                    <span class="nav-icon">🚪</span>
+                    <span class="nav-text">Log Out</span>
+                </button>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <h1 class="page-title">Financial Analytics</h1>
+
+                <!-- Row 1: Summary Cards (Total All Time) -->
+                <div class="summary-cards">
+                    <div class="summary-card income-card">
+                        <div class="card-content">
+                            <div class="card-label">💵 Total Income 💵</div>
+                            <div class="card-value" id="totalIncome">$0.00</div>
+                        </div>
+                    </div>
+                    <div class="summary-card expense-card">
+                        <div class="card-content">
+                            <div class="card-label">💸 Total Expenses 💸</div>
+                            <div class="card-value" id="totalExpense">$0.00</div>
+                        </div>
+                    </div>
+                    <div class="summary-card balance-card">
+                        <div class="card-content">
+                            <div class="card-label">💰 Net Balance 💰</div>
+                            <div class="card-value" id="netBalance">$0.00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Last 30 Days Summary Cards -->
+                <div class="monthly-summary-cards">
+                    <div class="summary-card monthly-income-card">
+                        <div class="card-content">
+                            <div class="card-label">📅 Last 30 Days Income</div>
+                            <div class="card-value" id="monthly30Income">$0.00</div>
+                        </div>
+                    </div>
+                    <div class="summary-card monthly-expense-card">
+                        <div class="card-content">
+                            <div class="card-label">📅 Last 30 Days Expenses</div>
+                            <div class="card-value" id="monthly30Expense">$0.00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 3: Expense Breakdown Charts (Total vs Last 30 Days) -->
+                <div class="charts-container">
+                    <div class="chart-box">
+                        <h2>Total Expense Breakdown by Category</h2>
+                        <canvas id="expenseChart"></canvas>
+                    </div>
+                    <div class="chart-box">
+                        <h2>Past 30 Days Expense Breakdown by Category</h2>
+                        <canvas id="expense30Chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Row 4: Income vs Expenses Trend -->
+                <div class="trend-container">
+                    <div class="chart-box">
+                        <h2>Income vs Expenses Trend</h2>
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Row 5: Category Breakdown Lists (Total vs Last 30 Days) -->
+                <div class="category-breakdown-container">
+                    <div class="category-details">
+                        <h2>Total Category Breakdown</h2>
+                        <div id="categoryList">
+                            <p class="empty-state">No data available. Add some transactions to see analytics!</p>
+                        </div>
+                    </div>
+                    <div class="category-details">
+                        <h2>Past 30 Days Category Breakdown</h2>
+                        <div id="category30List">
+                            <p class="empty-state">No data available. Add some transactions to see analytics!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="function/main.js"></script>
+    <script src="function/charts.js"></script>
+</body>
+</html>
