@@ -213,6 +213,231 @@ html.dark-mode .theme-icon.moon {
 }
 
 /* ============================================
+   SETTINGS & PROFILE MODALS
+   ============================================ */
+
+.overlay-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--modal-overlay);
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+.overlay-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-box {
+    background: var(--container-bg);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    box-shadow: 0 20px 60px var(--shadow-medium);
+    min-width: 400px;
+    max-width: 500px;
+    animation: slideUp 0.3s ease;
+    position: relative;
+}
+
+.modal-box-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.modal-box-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-box-close {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.modal-box-close:hover {
+    background: var(--hover-bg);
+    color: var(--error-color);
+}
+
+.modal-box-content {
+    color: var(--text-primary);
+}
+
+/* Settings Modal Specific Styles */
+.settings-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+.settings-section:last-child {
+    margin-bottom: 0;
+}
+
+.settings-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.language-dropdown {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--input-bg);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: 16px;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 40px;
+}
+
+.language-dropdown:hover {
+    border-color: var(--primary-purple);
+}
+
+.language-dropdown:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 0 3px var(--primary-purple-bg);
+}
+
+.language-dropdown option:disabled {
+    color: var(--text-tertiary);
+}
+
+.language-option {
+    padding: 10px;
+    position: relative;
+}
+
+.language-option.disabled {
+    cursor: not-allowed;
+    color: var(--text-tertiary) !important;
+}
+
+/* Tooltip for disabled language */
+.language-tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.language-tooltip .tooltip-text {
+    visibility: hidden;
+    width: 220px;
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+    text-align: center;
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    position: absolute;
+    z-index: 1001;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -110px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    border: 2px solid var(--border-color);
+    font-size: 12px;
+    box-shadow: 0 4px 12px var(--shadow-light);
+}
+
+.language-tooltip .tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: var(--border-color) transparent transparent transparent;
+}
+
+.language-tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+.disabled-notice {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-top: var(--spacing-sm);
+    font-style: italic;
+}
+
+/* Profile Modal Specific Styles */
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.profile-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.profile-field-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.profile-field-value {
+    padding: 12px 16px;
+    background: var(--input-bg);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: 16px;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-purple-light) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    color: white;
+    margin: 0 auto var(--spacing-lg);
+    box-shadow: 0 4px 12px var(--shadow-light);
+}
+
+/* ============================================
    LAYOUT & SIDEBAR
    ============================================ */
 
@@ -368,142 +593,60 @@ html.dark-mode .logout-btn:hover {
 }
 
 .exchange-card {
-    grid-column: 2;
+    grid-column: 2 / 4;
     grid-row: 4;
 }
 
 /* ============================================
-   DASHBOARD CARDS - BASE
+   DASHBOARD CARDS
    ============================================ */
 
 /* Light Mode */
 .dashboard-card {
     background: var(--card-bg);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
     border: 2px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    padding: 24px;
     transition: all 0.3s ease;
 }
 
 .dashboard-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px var(--shadow-light);
     border-color: var(--primary-purple);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px var(--shadow-light);
 }
 
 .card-title {
-    font-size: 20px;
-    color: var(--text-primary);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-secondary);
     margin-bottom: var(--spacing-md);
-    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.card-main-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+    transition: color 0.3s ease;
+}
+
+.card-comparison {
+    font-size: 14px;
+    color: var(--text-tertiary);
     transition: color 0.3s ease;
 }
 
 /* Dark mode styles inherit from CSS variables */
 
 /* ============================================
-   FINANCIAL SUMMARY CARDS
-   ============================================ */
-
-/* Light Mode */
-.income-card {
-    background: linear-gradient(90deg, #bdffd5 0%, #50cf44 100%);
-    border-color: #2d8a3e;
-}
-
-.expense-card {
-    background: linear-gradient(135deg, #fbc1cd 0%, #e54f6D 100%);
-    border-color: #c41e3a;
-}
-
-.balance-card {
-    background: linear-gradient(135deg, #fae8af 0%, #f8c630 100%);
-    border-color: #d4a017;
-}
-
-.card-main-value {
-    font-size: 32px;
-    font-weight: 700;
-    color: #2c2c2c;
-    margin: var(--spacing-md) 0;
-}
-
-.card-comparison {
-    font-size: 13px;
-    color: #4a4a4a;
-    font-weight: 500;
-}
-
-/* Dark Mode */
-html.dark-mode .income-card {
-    background: linear-gradient(90deg, #2d5a3d 0%, #1e4029 100%);
-    border-color: #4ade80;
-}
-
-html.dark-mode .expense-card {
-    background: linear-gradient(135deg, #5a2d3d 0%, #4a1e2e 100%);
-    border-color: #f87171;
-}
-
-html.dark-mode .balance-card {
-    background: linear-gradient(135deg, #5a4d2d 0%, #4a3e1e 100%);
-    border-color: #fbbf24;
-}
-
-html.dark-mode .income-card .card-title,
-html.dark-mode .expense-card .card-title,
-html.dark-mode .balance-card .card-title {
-    color: var(--text-primary);
-}
-
-html.dark-mode .card-main-value {
-    color: var(--text-primary);
-}
-
-html.dark-mode .income-card .card-main-value,
-html.dark-mode .expense-card .card-main-value,
-html.dark-mode .balance-card .card-main-value {
-    color: var(--text-primary);
-}
-
-html.dark-mode .card-comparison {
-    color: var(--text-secondary);
-}
-
-html.dark-mode .income-card .card-comparison,
-html.dark-mode .expense-card .card-comparison,
-html.dark-mode .balance-card .card-comparison {
-    color: var(--text-secondary);
-}
-
-html.dark-mode #dashNetBalance {
-    font-weight: 700;
-}
-
-/* ============================================
-   CHART CARD
-   ============================================ */
-
-/* Light Mode */
-.chart-card canvas {
-    width: 100% !important;
-    height: 320px !important;
-}
-
-/* Dark mode styles inherit from base card styles */
-
-/* ============================================
    SPENDING LIST CARD
    ============================================ */
 
 /* Light Mode */
-.spending-list-card {
-    display: flex;
-    flex-direction: column;
-}
-
 .spending-list {
-    flex: 1;
+    max-height: 300px;
     overflow-y: auto;
     margin-bottom: var(--spacing-md);
 }
@@ -512,38 +655,42 @@ html.dark-mode #dashNetBalance {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--spacing-sm) 0;
-    border-bottom: 1px solid var(--border-color);
-    transition: border-color 0.3s ease;
+    padding: 12px;
+    background: var(--input-bg);
+    border-radius: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+    border: 2px solid var(--border-color);
+    transition: all 0.3s ease;
 }
 
-.spending-item:last-child {
-    border-bottom: none;
+.spending-item:hover {
+    border-color: var(--primary-purple);
+    transform: translateX(4px);
 }
 
-.spending-info {
+.spending-item-left {
     display: flex;
-    gap: 12px;
-    align-items: center;
+    flex-direction: column;
+    gap: 4px;
 }
 
-.spending-category {
+.spending-item-category {
     font-size: 14px;
-    color: var(--text-primary);
     font-weight: 500;
+    color: var(--text-primary);
     transition: color 0.3s ease;
 }
 
-.spending-date {
+.spending-item-date {
     font-size: 12px;
     color: var(--text-tertiary);
     transition: color 0.3s ease;
 }
 
-.spending-amount {
+.spending-item-amount {
     font-size: 16px;
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--error-color);
     transition: color 0.3s ease;
 }
 
@@ -857,6 +1004,11 @@ html.dark-mode .btn-secondary {
         grid-column: 2;
         grid-row: 5;
     }
+    
+    .modal-box {
+        min-width: 350px;
+        max-width: 90%;
+    }
 }
 
 @media (max-width: 768px) {
@@ -911,5 +1063,11 @@ html.dark-mode .btn-secondary {
     .exchange-card {
         grid-column: 1;
         grid-row: auto;
+    }
+    
+    .modal-box {
+        min-width: 300px;
+        max-width: 95%;
+        padding: var(--spacing-lg);
     }
 }
