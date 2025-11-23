@@ -3,7 +3,9 @@ const StorageKeys = {
     TRANSACTIONS: 'transactions',
     GOALS: 'goals',
     IS_LOGGED_IN: 'isLoggedIn',
-    THEME: 'theme'
+    THEME: 'theme',
+    USERNAME: 'username',
+    LANGUAGE: 'language'
 };
 
 const CategoryIcons = {
@@ -107,10 +109,154 @@ function toggleTheme() {
     document.documentElement.style.transition = 'all 0.3s ease';
 }
 
+// ==================== SETTINGS MODAL ====================
+function initializeSettingsModal() {
+    const settingsBtn = document.getElementById('settingsBtn');
+    if (!settingsBtn) return;
+    
+    // Create settings modal HTML
+    const settingsModal = document.createElement('div');
+    settingsModal.id = 'settingsModal';
+    settingsModal.className = 'overlay-modal';
+    settingsModal.innerHTML = `
+        <div class="modal-box">
+            <div class="modal-box-header">
+                <h2 class="modal-box-title">⚙️ Settings</h2>
+                <button class="modal-box-close" id="closeSettings">✖</button>
+            </div>
+            <div class="modal-box-content">
+                <div class="settings-section">
+                    <label class="settings-label">Language</label>
+                    <select class="language-dropdown" id="languageSelect">
+                        <option value="en">🇬🇧 English</option>
+                        <option value="zh" disabled>🇨🇳 中文 (Chinese)</option>
+                    </select>
+                    <p class="disabled-notice">* Additional languages are coming soon</p>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(settingsModal);
+    
+    // Setup event listeners
+    settingsBtn.addEventListener('click', openSettingsModal);
+    document.getElementById('closeSettings').addEventListener('click', closeSettingsModal);
+    settingsModal.addEventListener('click', function(e) {
+        if (e.target === settingsModal) {
+            closeSettingsModal();
+        }
+    });
+    
+    // Handle language selection
+    const languageSelect = document.getElementById('languageSelect');
+    const savedLanguage = localStorage.getItem(StorageKeys.LANGUAGE) || 'en';
+    languageSelect.value = savedLanguage;
+    
+    languageSelect.addEventListener('change', function(e) {
+        if (e.target.value === 'zh') {
+            // Prevent selection and show alert
+            alert('This language has not yet been deployed.');
+            e.target.value = savedLanguage;
+        } else {
+            localStorage.setItem(StorageKeys.LANGUAGE, e.target.value);
+        }
+    });
+    
+    // Show tooltip on hover for disabled option
+    languageSelect.addEventListener('mouseover', function(e) {
+        const selectedOption = languageSelect.options[languageSelect.selectedIndex];
+        if (selectedOption && selectedOption.disabled) {
+            showTooltip('This language has not yet been deployed.');
+        }
+    });
+}
+
+function openSettingsModal() {
+    const modal = document.getElementById('settingsModal');
+    if (modal) {
+        modal.classList.add('active');
+    }
+}
+
+function closeSettingsModal() {
+    const modal = document.getElementById('settingsModal');
+    if (modal) {
+        modal.classList.remove('active');
+    }
+}
+
+// ==================== PROFILE MODAL ====================
+function initializeProfileModal() {
+    const profileBtn = document.getElementById('profileBtn');
+    if (!profileBtn) return;
+    
+    // Get username from localStorage or use default
+    let username = 'User';
+    const userCredentials = localStorage.getItem('userCredentials');
+    if (userCredentials) {
+        try {
+            const credentials = JSON.parse(userCredentials);
+            username = credentials.username;
+        } catch (error) {
+            console.error('Error parsing user credentials:', error);
+        }
+    }
+    
+    // Create profile modal HTML
+    const profileModal = document.createElement('div');
+    profileModal.id = 'profileModal';
+    profileModal.className = 'overlay-modal';
+    profileModal.innerHTML = `
+        <div class="modal-box">
+            <div class="modal-box-header">
+                <h2 class="modal-box-title">👤 Profile</h2>
+                <button class="modal-box-close" id="closeProfile">✖</button>
+            </div>
+            <div class="modal-box-content">
+                <div class="profile-avatar">👤</div>
+                <div class="profile-info">
+                    <div class="profile-field">
+                        <span class="profile-field-label">Username</span>
+                        <div class="profile-field-value" id="profileUsername">${username}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(profileModal);
+    
+    // Setup event listeners
+    profileBtn.addEventListener('click', openProfileModal);
+    document.getElementById('closeProfile').addEventListener('click', closeProfileModal);
+    profileModal.addEventListener('click', function(e) {
+        if (e.target === profileModal) {
+            closeProfileModal();
+        }
+    });
+}
+
+function openProfileModal() {
+    const modal = document.getElementById('profileModal');
+    if (modal) {
+        modal.classList.add('active');
+    }
+}
+
+function closeProfileModal() {
+    const modal = document.getElementById('profileModal');
+    if (modal) {
+        modal.classList.remove('active');
+    }
+}
+
 // ==================== MAIN APP ====================
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize theme first
     initializeTheme();
+    
+    // Initialize settings and profile modals
+    initializeSettingsModal();
+    initializeProfileModal();
     
     // Check authentication
     if (!checkAuth()) return;
@@ -242,60 +388,64 @@ function calculateMonthlyTotals(transactions, currentMonth, currentYear) {
 
 function updateSummaryCard(elementId, value) {
     const element = document.getElementById(elementId);
-    if (!element) return;
-    
-    element.textContent = Utils.formatCurrency(value);
-}
-
-function updateComparison(elementId, current, last) {
-    const element = document.getElementById(elementId);
-    if (!element) return;
-    
-    if (last === 0) {
-        element.textContent = current > 0 ? '+100% compare to last month' : 'No data from last month';
-        return;
+    if (element) {
+        element.textContent = Utils.formatCurrency(value);
     }
-    
-    const change = ((current - last) / last) * 100;
-    const sign = change > 0 ? '+' : '';
-    element.textContent = `${sign}${change.toFixed(1)}% compare to last month`;
 }
 
 function updateBalanceColor(elementId, balance) {
     const element = document.getElementById(elementId);
     if (!element) return;
     
+    // Remove existing color classes
+    element.style.color = '';
+    
+    // Determine color based on balance (positive = green, negative = red)
     const isDarkMode = document.documentElement.classList.contains('dark-mode');
     
     if (balance > 0) {
-        element.style.color = isDarkMode ? '#4ade80' : '#28a745';
+        element.style.color = isDarkMode ? '#4ade80' : '#28a745'; // success-color
     } else if (balance < 0) {
-        element.style.color = isDarkMode ? '#f87171' : '#dc3545';
+        element.style.color = isDarkMode ? '#f87171' : '#dc3545'; // error-color
     } else {
-        element.style.color = 'var(--text-primary)';
+        element.style.color = ''; // Use default text color
     }
+}
+
+function updateComparison(elementId, current, previous) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+    
+    if (previous === 0) {
+        element.textContent = current > 0 ? 'New this month' : 'No previous data';
+        return;
+    }
+    
+    const change = ((current - previous) / previous) * 100;
+    const sign = change >= 0 ? '+' : '';
+    element.textContent = `${sign}${change.toFixed(1)}% compare to last month`;
 }
 
 // ==================== LATEST SPENDING ====================
 function updateLatestSpending() {
     const transactions = Utils.safeGetFromStorage(StorageKeys.TRANSACTIONS);
-    const spendingList = document.getElementById('latestSpendingList');
+    const listContainer = document.getElementById('latestSpendingList');
     const totalElement = document.getElementById('spendingTotal');
     
-    if (!spendingList || !totalElement) return;
+    if (!listContainer || !totalElement) return;
     
     const expenses = transactions
         .filter(t => t.type === 'expense')
-        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .sort((a, b) => new Date(b.date + 'T00:00:00') - new Date(a.date + 'T00:00:00'))
         .slice(0, 5);
     
     if (expenses.length === 0) {
-        spendingList.innerHTML = '<p class="empty-state">No recent spending</p>';
+        listContainer.innerHTML = '<p class="empty-state">No recent spending</p>';
         totalElement.textContent = '$0.00';
         return;
     }
     
-    spendingList.innerHTML = '';
+    listContainer.innerHTML = '';
     let total = 0;
     
     expenses.forEach(expense => {
@@ -303,13 +453,13 @@ function updateLatestSpending() {
         const item = document.createElement('div');
         item.className = 'spending-item';
         item.innerHTML = `
-            <div class="spending-info">
-                <span class="spending-category">${Utils.getCategoryText(expense.category)}</span>
-                <span class="spending-date">${Utils.formatDate(expense.date)}</span>
+            <div class="spending-item-left">
+                <span class="spending-item-category">${Utils.getCategoryText(expense.category)}</span>
+                <span class="spending-item-date">${Utils.formatDate(expense.date)}</span>
             </div>
-            <span class="spending-amount">${Utils.formatCurrency(expense.amount)}</span>
+            <span class="spending-item-amount">${Utils.formatCurrency(expense.amount)}</span>
         `;
-        spendingList.appendChild(item);
+        listContainer.appendChild(item);
     });
     
     totalElement.textContent = Utils.formatCurrency(total);
@@ -317,38 +467,43 @@ function updateLatestSpending() {
 
 // ==================== WEEKLY TREND CHART ====================
 function updateWeeklyTrendChart() {
+    const transactions = Utils.safeGetFromStorage(StorageKeys.TRANSACTIONS);
     const canvas = document.getElementById('weeklyTrendChart');
+    
     if (!canvas) return;
     
-    const transactions = Utils.safeGetFromStorage(StorageKeys.TRANSACTIONS);
     const { labels, incomeData, expenseData } = prepareWeeklyData(transactions);
     
     const ctx = canvas.getContext('2d');
     
+    // Destroy existing chart if it exists
     if (window.weeklyChart) {
         window.weeklyChart.destroy();
     }
     
+    // Get color based on theme
+    const isDarkMode = document.documentElement.classList.contains('dark-mode');
+    const textColor = isDarkMode ? '#e0e0e0' : '#333';
+    const gridColor = isDarkMode ? '#3a3a4a' : '#E0E0E0';
+    
     window.weeklyChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: labels,
+            labels,
             datasets: [
                 {
                     label: 'Income',
                     data: incomeData,
-                    borderColor: '#28a745',
-                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
-                    tension: 0.4,
-                    fill: true
+                    borderColor: isDarkMode ? '#4ade80' : '#28a745',
+                    backgroundColor: isDarkMode ? 'rgba(74, 222, 128, 0.1)' : 'rgba(40, 167, 69, 0.1)',
+                    tension: 0.4
                 },
                 {
-                    label: 'Expenses',
+                    label: 'Expense',
                     data: expenseData,
-                    borderColor: '#dc3545',
-                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
-                    tension: 0.4,
-                    fill: true
+                    borderColor: isDarkMode ? '#f87171' : '#dc3545',
+                    backgroundColor: isDarkMode ? 'rgba(248, 113, 113, 0.1)' : 'rgba(220, 53, 69, 0.1)',
+                    tension: 0.4
                 }
             ]
         },
@@ -358,7 +513,11 @@ function updateWeeklyTrendChart() {
             plugins: {
                 legend: {
                     position: 'bottom',
-                    labels: { padding: 15, font: { size: 12 } }
+                    labels: { 
+                        padding: 15, 
+                        font: { size: 12 },
+                        color: textColor
+                    }
                 },
                 tooltip: {
                     callbacks: {
@@ -370,7 +529,19 @@ function updateWeeklyTrendChart() {
                 y: {
                     beginAtZero: true,
                     ticks: {
-                        callback: value => Utils.formatCurrency(value)
+                        callback: value => Utils.formatCurrency(value),
+                        color: textColor
+                    },
+                    grid: {
+                        color: gridColor
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: textColor
+                    },
+                    grid: {
+                        color: gridColor
                     }
                 }
             }
