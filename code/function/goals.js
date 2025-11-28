@@ -333,12 +333,64 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function togglePinGoal(id) {
         const goals = Utils.safeGetFromStorage(StorageKeys.GOALS);
+        const goal = goals.find(g => g.id === id);
+        
+        if (!goal) return;
+        
+        // If trying to pin (not unpin), check the limit
+        if (!goal.pinned) {
+            const pinnedCount = goals.filter(g => g.pinned && !g.achieved).length;
+            if (pinnedCount >= 3) {
+                showLimitModal();
+                return;
+            }
+        }
+        
         const updatedGoals = goals.map(g => 
             g.id === id ? { ...g, pinned: !g.pinned } : g
         );
+        
         Utils.safeSaveToStorage(StorageKeys.GOALS, updatedGoals);
         displayGoals();
     }
+
+    function showLimitModal() {
+        const overlay = document.createElement('div');
+        overlay.className = 'custom-modal-overlay';
+        
+        const modal = document.createElement('div');
+        modal.className = 'custom-modal';
+        modal.innerHTML = `
+            <div class="custom-modal-header">
+                <h3>⚠️ Pin Limit Reached</h3>
+            </div>
+            <div class="custom-modal-body">
+                <p>You can only pin up to <strong>3 goals</strong> on the dashboard.</p>
+                <p>Please unpin an existing goal before pinning a new one.</p>
+            </div>
+            <div class="custom-modal-actions">
+                <button class="custom-modal-btn confirm-btn-modal">OK</button>
+            </div>
+        `;
+        
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+        
+        setTimeout(() => overlay.classList.add('show'), 10);
+        
+        const okBtn = modal.querySelector('.confirm-btn-modal');
+        
+        function closeModal() {
+            overlay.classList.remove('show');
+            setTimeout(() => overlay.remove(), 300);
+        }
+        
+        okBtn.addEventListener('click', closeModal);
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) closeModal();
+        });
+    }
+
 
     function achieveGoal(id) {
         const currentBalance = calculateNetBalance();
