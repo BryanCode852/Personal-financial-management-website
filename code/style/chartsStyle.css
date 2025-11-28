@@ -200,6 +200,52 @@ html.dark-mode .chart-box h2 {
 /* Dark mode styles inherit from .chart-box */
 
 /* ============================================
+   TREND FILTER BUTTONS
+   ============================================ */
+
+.trend-filter-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: center;
+}
+
+.filter-btn {
+    padding: 8px 20px;
+    border: 2px solid var(--border-color, #E0E0E0);
+    background: var(--card-bg, #fafafa);
+    color: var(--text-primary, #333);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    border-color: var(--primary-purple, #9B6FD6);
+    transform: translateY(-2px);
+}
+
+.filter-btn.active {
+    background: var(--primary-purple, #9B6FD6);
+    color: white;
+    border-color: var(--primary-purple, #9B6FD6);
+}
+
+/* Dark Mode */
+html.dark-mode .filter-btn {
+    background: var(--input-bg);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+html.dark-mode .filter-btn.active {
+    background: var(--primary-purple, #9B6FD6);
+    color: white;
+}
+
+/* ============================================
    CATEGORY BREAKDOWN CONTAINER
    ============================================ */
 
