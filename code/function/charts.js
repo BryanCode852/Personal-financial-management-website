@@ -6,8 +6,37 @@ document.addEventListener('DOMContentLoaded', function() {
     let expense30ChartInstance = null;
     let trendChartInstance = null;
     let currentTotals = null;
+    let currentTrendFilter = 'both'; 
 
     loadAnalytics();
+
+    document.getElementById('showBothBtn')?.addEventListener('click', function() {
+        currentTrendFilter = 'both';
+        updateFilterButtons('showBothBtn');
+        const transactions = Utils.safeGetFromStorage(StorageKeys.TRANSACTIONS);
+        createTrendChart(transactions);
+    });
+
+    document.getElementById('showIncomeBtn')?.addEventListener('click', function() {
+        currentTrendFilter = 'income';
+        updateFilterButtons('showIncomeBtn');
+        const transactions = Utils.safeGetFromStorage(StorageKeys.TRANSACTIONS);
+        createTrendChart(transactions);
+    });
+
+    document.getElementById('showExpenseBtn')?.addEventListener('click', function() {
+        currentTrendFilter = 'expense';
+        updateFilterButtons('showExpenseBtn');
+        const transactions = Utils.safeGetFromStorage(StorageKeys.TRANSACTIONS);
+        createTrendChart(transactions);
+    });
+
+    function updateFilterButtons(activeId) {
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.getElementById(activeId)?.classList.add('active');
+    }
 
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
@@ -216,7 +245,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function createTrendChart(transactions) {
         const dateTotals = {};
-        
         transactions.forEach(t => {
             if (!dateTotals[t.date]) {
                 dateTotals[t.date] = { income: 0, expense: 0 };
@@ -240,28 +268,34 @@ document.addEventListener('DOMContentLoaded', function() {
             trendChartInstance.destroy();
         }
 
+        // Determine which datasets to show based on filter
+        const datasets = [];
+        if (currentTrendFilter === 'both' || currentTrendFilter === 'income') {
+            datasets.push({
+                label: 'Income',
+                data: incomeData,
+                borderColor: '#28a745',
+                backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                tension: 0.4,
+                fill: true
+            });
+        }
+        if (currentTrendFilter === 'both' || currentTrendFilter === 'expense') {
+            datasets.push({
+                label: 'Expenses',
+                data: expenseData,
+                borderColor: '#dc3545',
+                backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                tension: 0.4,
+                fill: true
+            });
+        }
+
         trendChartInstance = new Chart(ctx, {
             type: 'line',
             data: {
                 labels,
-                datasets: [
-                    {
-                        label: 'Income',
-                        data: incomeData,
-                        borderColor: '#28a745',
-                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    },
-                    {
-                        label: 'Expenses',
-                        data: expenseData,
-                        borderColor: '#dc3545',
-                        backgroundColor: 'rgba(220, 53, 69, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }
-                ]
+                datasets: datasets
             },
             options: {
                 responsive: true,
@@ -291,7 +325,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-
     function displayCategoryBreakdown(transactions) {
         const expenses = transactions.filter(t => t.type === 'expense');
         const categoryTotals = {};
